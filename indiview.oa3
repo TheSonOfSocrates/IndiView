@@ -1,0 +1,535 @@
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+info:
+  description:
+    Distributed Contact App API
+  version: "0.0.1"
+  title: IndiView
+  contact:
+    email: roland.osborne@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+
+  - name: account
+    description: view account status
+
+paths:
+
+  /account/attach:
+    put:
+      tags:
+        - account
+      description: Attach app to specified identity
+      operationId: attach
+      parameters:
+        - name: code
+          in: query
+          description: attachment code for access
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+        '404':
+          description: token not found
+        '500':
+          description: internal server error      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmigoMessage'
+        description: updated configuration
+        required: true
+          
+  /account/notifications:
+    put:
+      tags:
+        - account
+      description: Update notification parameters
+      operationId: set-notifications
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: successful operation
+        '404':
+          description: token not found
+        '500':
+          description: internal server error      
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Notifications'
+        description: updated configuration
+        required: true
+        
+  /account/notify:
+    put:
+      tags:
+        - account
+      description: Notify contact of event
+      operationId: set-event
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+        - name: amigoId
+          in: query
+          description: id of contact
+          required: true
+          schema:
+            type: string
+        - name: event
+          in: query
+          description: type of event
+          required: true
+          schema:
+            type: string
+            enum: [dialogue, blurb]
+      responses:
+        '201':
+          description: successful operation
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+        
+  /account/identity:
+    get:
+      tags:
+        - account
+      description: Retrieve revision of cached identity
+      operationId: get-identity
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+    put:
+      tags:
+        - account
+      description: Update cached identity
+      operationId: set-identity
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+          
+  /account/status:
+    get:
+      tags:
+        - account
+      description: Retrieve status of account
+      operationId: status
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+          
+  /account/report:
+    put:
+      tags:
+        - account
+      description: Report user for review
+      operationId: report
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+        - name: amigoId
+          in: query
+          description: id of reported account
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+          
+  /account/settings:
+    get:
+      tags:
+        - account
+      description: Retrieve account settings
+      operationId: get-settings
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settings'
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+    put:
+      tags:
+        - account
+      description: Update cached identity
+      operationId: set-settings
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: successful operation
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Settings'
+        description: updated configuration
+        required: true
+          
+  /account/search:
+    get:
+      tags:
+        - account
+      description: Serach accounts with matching text
+      operationId: get-matching
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+        - name: match
+          in: query
+          description: text to search on
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+    put:
+      tags:
+        - account
+      description: Search accounts with matching location
+      operationId: get-nearby
+      parameters:
+        - name: token
+          in: query
+          description: app token
+          required: true
+          schema:
+            type: string
+        - name: longitudeDelta
+          in: query
+          description: range of matching values
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: latitudeDelta
+          in: query
+          description: range of matching values
+          required: false
+          schema:
+            type: integer
+            format: int32
+        - name: altitudeDelta
+          in: query
+          description: range of matching values
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+        '404':
+          description: token not found
+        '500':
+          description: internal server error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GpsLocation'
+        description: updated configuration
+        required: true
+        
+components:
+  schemas:
+
+    GpsLocation:
+      type: object
+      required:
+        - longitude
+        - latitude
+        - altitude
+      properties:
+        longitude:
+          type: number
+          format: float
+        latitude:
+          type: number
+          format: float
+        altitude:
+          type: number
+          format: float
+          
+    Notifications:
+      type: object
+      required:
+        - token
+        - channel
+      properties:
+        token:
+          type: string
+        channel:
+          type: string
+          enum: [apn, fcm]
+          
+    Login:
+      type: object
+      required:
+        - amigoId
+        - appToken
+        - accountToken
+        - accountNode
+        - serviceToken
+        - serviceNode
+      properties:
+        amigoId:
+          type: string
+          format: amigo-id
+        appToken:
+          type: string
+          format: secure-token
+        accountToken:
+          type: string
+          format: secure-token
+        accountNode:
+          type: string
+        serviceToken:
+          type: string
+          format: secure-token
+        serviceNode:
+          type: string
+          
+    Settings:
+      type: object
+      required:
+        - searchable
+        - videoQuality
+        - audioQuality
+        - videoMute
+        - audioMute
+        - notifications
+      properties:
+        searchable:
+          type: boolean
+        videoQuality:
+          type: string
+        audioQuality:
+          type: string
+        videoMute:
+          type: boolean
+        audioMute:
+          type: boolean
+        notifications:
+          type: boolean
+          
+    Contact:
+      type: object
+      required:
+        - amigoId
+        - registry
+        - name
+      properties:
+        amigoId:
+          type: string
+        registry:
+          type: string
+        name:
+          type: string
+        handle:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+        logoSet:
+          type: boolean
+          
+    Amigo:
+      type: object
+      required:
+        - amigoId
+        - node
+        - revision
+        - version
+      properties:
+        amigoId:
+          type: string
+          format: emigoId
+        name:
+          type: string
+        description:
+          type: string
+        logo:
+          type: string
+          format: base64 encoding of binary image
+        location:
+          type: string
+        node:
+          type: string
+          example: https://node.coredb.org:9999/app
+        registry:
+          type: string
+          example: https://registry.coredb.org:8888/app
+        revision:
+          type: integer
+          format: int32
+        version:
+          type: string
+          format: protocol-version
+        handle:
+          type: string
+
+    AmigoToken:
+      type: object
+      required:
+        - amigoId
+        - amigo
+        - signature
+        - token
+      properties:
+        amigoId:
+          type: string
+          format: emigo-id
+        amigo:
+          $ref: '#/components/schemas/AmigoMessage'
+        signature:
+          type: string
+          format: signature
+        token:
+          type: string
+          format: Base64 & JSON serialized string of token
+
+    AmigoMessage:
+      type: object
+      required:
+        - key
+        - keyType
+        - signature
+        - data
+      properties:
+        key:
+          type: string
+          format: emigo-key
+        keyType:
+          type: string
+        signature:
+          type: string
+          format: signature of Base64 data converted to hex string
+        data:
+          type: string
+          format: Base64 & JSON serialized string of data object
+
